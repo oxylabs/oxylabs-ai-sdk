@@ -31,16 +31,17 @@ import { generateText, isStepCount } from 'ai';
 import { oxylabsTools } from 'oxylabs-ai-sdk';
 
 const { text } = await generateText({
-  model: 'anthropic/claude-sonnet-4.5',
-  prompt: 'What are the top headlines in Germany today?',
+  model: 'openai/gpt-5-mini',
+  prompt: 'What are the top news headlines in Germany today? Cite your sources.',
   tools: oxylabsTools(),
-  stopWhen: isStepCount(5),
+  stopWhen: isStepCount(10),
 });
 
 console.log(text);
 ```
 
-On AI SDK 5 and 6, use `stepCountIs(5)` instead of `isStepCount(5)`.
+On AI SDK 5 and 6, use `stepCountIs(10)` instead of `isStepCount(10)`. Agents usually search once and then
+read a few pages, so leave room for several steps.
 
 The tools work the same way in `streamText`, `ToolLoopAgent` and anywhere else that takes `tools`.
 To use one tool, or to configure each separately:
@@ -125,7 +126,7 @@ const mcp = await createMCPClient({
 
 try {
   const { text } = await generateText({
-    model: 'anthropic/claude-sonnet-4.5',
+    model: 'openai/gpt-5-mini',
     prompt: 'Compare the prices of the top 3 standing desks on amazon.de',
     tools: await mcp.tools(),
     stopWhen: isStepCount(8),

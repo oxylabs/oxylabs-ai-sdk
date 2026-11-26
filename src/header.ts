@@ -1,5 +1,5 @@
 // Kept in step with package.json by test/version.test.ts.
-export const VERSION = "0.1.0";
+export const VERSION = "0.1.1";
 
 /** The name Oxylabs counts this package's requests under. */
 export const SDK_NAME = "oxylabs-web-api-vercel-ai-sdk";

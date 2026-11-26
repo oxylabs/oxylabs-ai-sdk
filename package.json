@@ -1,6 +1,6 @@
 {
   "name": "oxylabs-ai-sdk",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "Oxylabs Web API tools for the Vercel AI SDK: geo-targeted live web search and reading of JavaScript-heavy and bot-protected pages.",
   "license": "MIT",
   "type": "module",

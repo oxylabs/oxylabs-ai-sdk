@@ -7,11 +7,11 @@ import { oxylabsTools } from "oxylabs-ai-sdk";
 const question = process.argv[2] ?? "What changed in the latest Node.js LTS release?";
 
 const { text, steps } = await generateText({
-  model: "anthropic/claude-sonnet-4.5",
+  model: "openai/gpt-5-mini",
   system: "Answer from pages you have read, and cite their URLs.",
   prompt: question,
   tools: oxylabsTools(),
-  stopWhen: stepCountIs(6),
+  stopWhen: stepCountIs(10),
 });
 
 for (const step of steps) {
