@@ -1,0 +1,85 @@
+name: CI
+
+on:
+  pull_request:
+  push:
+    branches:
+      - main
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+
+jobs:
+  test:
+    name: test (node ${{ matrix.node }}, ${{ matrix.ai }}, ${{ matrix.zod }})
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        node: [22, 24]
+        ai: [ai@ai-v5, ai@ai-v6, ai@latest]
+        zod: [zod@^3.25.76, zod@^4]
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+
+      - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
+        with:
+          node-version: ${{ matrix.node }}
+          cache: npm
+
+      - run: npm ci --ignore-scripts
+      - name: Install the AI SDK and zod versions under test
+        run: |
+          npm install --no-save --ignore-scripts "${{ matrix.ai }}" "${{ matrix.zod }}"
+          node -p '"ai " + require("ai/package.json").version + ", zod " + require("zod/package.json").version'
+      # Build first: the example imports the package by name, which resolves to dist.
+      - run: npm run build
+      - run: npm run check
+      - run: npm test
+
+  # The published types are built against the pinned AI SDK; check they still type-check
+  # in a project on each supported major.
+  types:
+    needs: test
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        ai: [ai@ai-v5, ai@ai-v6, ai@latest]
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+
+      - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
+        with:
+          node-version: 24
+          cache: npm
+
+      - run: npm ci --ignore-scripts
+      - run: npm run build
+      - run: npm install --no-save --ignore-scripts "${{ matrix.ai }}"
+      - run: npm run check
+
+  live:
+    needs: test
+    runs-on: ubuntu-latest
+    if: ${{ github.event_name == 'push' || github.event.pull_request.head.repo.full_name == github.repository }}
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+
+      - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
+        with:
+          node-version: 24
+          cache: npm
+
+      - run: npm ci --ignore-scripts
+      - run: npm run build
+      - name: Live test against the Oxylabs Web API
+        env:
+          OXYLABS_WEB_API_KEY: ${{ secrets.OXYLABS_WEB_API_KEY }}
+        run: |
+          if [ -z "$OXYLABS_WEB_API_KEY" ]; then echo "OXYLABS_WEB_API_KEY secret not set; skipping."; exit 0; fi
+          node scripts/live-test.mjs

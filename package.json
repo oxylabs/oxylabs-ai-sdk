@@ -1,0 +1,63 @@
+{
+  "name": "oxylabs-ai-sdk",
+  "version": "0.1.0",
+  "description": "Oxylabs Web API tools for the Vercel AI SDK: geo-targeted live web search and reading of JavaScript-heavy and bot-protected pages.",
+  "license": "MIT",
+  "type": "module",
+  "homepage": "https://github.com/oxylabs/oxylabs-ai-sdk#readme",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/oxylabs/oxylabs-ai-sdk.git"
+  },
+  "bugs": "https://github.com/oxylabs/oxylabs-ai-sdk/issues",
+  "author": {
+    "name": "Oxylabs",
+    "email": "giedrius.stankauskas@oxylabs.io"
+  },
+  "keywords": [
+    "ai",
+    "ai-sdk",
+    "vercel-ai-sdk",
+    "tools",
+    "oxylabs",
+    "web-search",
+    "web-scraping",
+    "agents"
+  ],
+  "files": [
+    "dist",
+    "src"
+  ],
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "default": "./dist/index.js"
+    },
+    "./package.json": "./package.json"
+  },
+  "types": "./dist/index.d.ts",
+  "sideEffects": false,
+  "scripts": {
+    "build": "rm -rf dist && tsc -p tsconfig.build.json",
+    "check": "tsc --noEmit",
+    "test": "rm -rf .test-build && tsc -p tsconfig.test.json && node --test --test-timeout=30000 '.test-build/test/**/*.test.js'",
+    "test:live": "npm run build && node --env-file-if-exists=.env scripts/live-test.mjs",
+    "prepack": "npm run build"
+  },
+  "publishConfig": {
+    "access": "public"
+  },
+  "peerDependencies": {
+    "ai": "^5.0.0 || ^6.0.0 || ^7.0.0",
+    "zod": "^3.25.76 || ^4.1.8"
+  },
+  "devDependencies": {
+    "@types/node": "^24.10.0",
+    "ai": "7.0.179",
+    "typescript": "~5.9.3",
+    "zod": "4.6.7"
+  },
+  "engines": {
+    "node": ">=22"
+  }
+}
