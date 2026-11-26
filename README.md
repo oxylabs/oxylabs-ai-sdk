@@ -5,7 +5,7 @@
 
 Give your [AI SDK](https://ai-sdk.dev) agent the live web: geo-targeted web search and a page reader
 that gets through JavaScript-heavy and bot-protected sites, powered by the
-[Oxylabs Web API](https://oxylabs.io).
+[Oxylabs Web API](https://oxylabs.io/?utm_source=github&utm_medium=referral&utm_content=oxylabs-ai-sdk&groupid=877).
 
 - `webSearch`: ranked organic results for a query, as someone in a given country sees them.
   Optionally reads the top results too, so one call answers most questions.
